@@ -1,85 +1,103 @@
-import axios from "axios";
-import { setAlert } from "./alert";
+import axios from 'axios';
+import { setAlert } from './alert';
 import {
-  SIGNUP_SUCCESS,
-  SIGNUP_FAIL,
-  LOGIN_SUCCESS,
-  LOGIN_FAIL,
-  LOGOUT,
-} from "./types";
+	SIGNUP_SUCCESS,
+	SIGNUP_FAIL,
+	LOGIN_SUCCESS,
+	LOGIN_FAIL,
+	LOGOUT,
+} from './types';
 
-axios.defaults.xsrfHeaderName = "x-csrftoken";
-axios.defaults.xsrfCookieName = "csrftoken";
-// axios.defaults.withCredentials = true;
-export const login = (email, password) => async (dispatch) => {
-  const config = {
-    headers: {
-      "Content-Type": "application/json",
-      // "Access-Control-Allow-Origin": "http://localhost:3000",
-      // "origin": "http://localhost:3000",
-
-      // "Access-Control-Allow-Methods": "POST, GET, OPTIONS, DELETE, PUT",
-      // "Access-Control-Allow-Headers": "Origin, Content-Type, Methods",
-      // "Access-Control-Max-Age": "200",
-    },
-  };
-  const body = JSON.stringify({ email, password });
-
-  try {
-    const res = await axios.post(
-      `http://localhost:8000/api/token/`,
-      body,
-      config
-    );
-
-    dispatch({
-      type: LOGIN_SUCCESS,
-      payload: res.data,
-    });
-
-    dispatch(setAlert("Authenticated successfully", "success"));
-  } catch (err) {
-    dispatch({
-      type: LOGIN_FAIL,
-    });
-
-    dispatch(setAlert("Error Authenticating", "error"));
+// axios.defaults.xsrfCookieName = 'csrftoken';
+axios.defaults.withCredentials = true;
+export const login = (login) => async (dispatch) => {
+  let csrf;
+  let name = 'csrftoken=';
+  let decodedCookie = decodeURIComponent(document.cookie);
+  let ca = decodedCookie.split(';');
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) === ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) === 0) {
+      csrf =  c.substring(name.length, c.length);
+    }
   }
+
+  console.log('🚀 ~ file: auth.js ~ line 15 ~ login ~ csrf', csrf);
+	const config = {
+    headers: {
+      'Accept': '/',
+      'Cache-Control': 'no-cache',
+			'Content-Type': 'application/json',
+      'Cookie': `${csrf}`,
+      
+    },
+    credentials: 'same-origin',
+	};
+	const body = JSON.stringify(login);
+	console.log('🚀 ~ file: auth.js ~ line 22 ~ login ~ login', login);
+
+	try {
+		const res = await axios.post(
+			`http://localhost:8000/api/token/`,
+			body,
+			config
+		);
+
+		dispatch({
+			type: LOGIN_SUCCESS,
+			payload: res.data,
+		});
+
+		dispatch(setAlert('Authenticated successfully', 'success'));
+	} catch (err) {
+		dispatch({
+			type: LOGIN_FAIL,
+		});
+
+		dispatch(setAlert('Error Authenticating', 'error'));
+	}
 };
 
-export const signup =
-  ({ name, email, password, password2 }) =>
-  async (dispatch) => {
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-    const body = JSON.stringify({ name, email, password, password2 });
+export const signup = (register) => async (dispatch) => {
+	const config = {
+		headers: {
+			'Content-Type': 'application/json',
+		},
+	};
+	const body = JSON.stringify(register);
 
-    try {
-      const res = await axios.post(
-        "http://localhost:8000/api/accounts/signup",
-        body,
-        config
-      );
+	try {
+		const res = await axios.post(
+			'http://localhost:8000/api/accounts/signup',
+			body,
+			config
+		);
 
-      dispatch({
-        type: SIGNUP_SUCCESS,
-        payload: res.data,
-      });
+		dispatch({
+			type: SIGNUP_SUCCESS,
+			payload: res.data,
+		});
 
-      dispatch(login(email, password));
-    } catch (err) {
-      dispatch({
-        type: SIGNUP_FAIL,
-      });
+		const { email, password } = register;
 
-      dispatch(setAlert("Error Authenticating", "error"));
-    }
-  };
+		const login = {
+			email: `${email}`,
+			password: `${password}`,
+		};
+
+		dispatch(login(login));
+	} catch (err) {
+		dispatch({
+			type: SIGNUP_FAIL,
+		});
+		dispatch(setAlert('Error Authenticating', 'error'));
+	}
+};
 
 export const logout = () => (dispatch) => {
-  dispatch(setAlert("logout successful.", "success"));
-  dispatch({ type: LOGOUT });
+	dispatch(setAlert('logout successful.', 'success'));
+	dispatch({ type: LOGOUT });
 };

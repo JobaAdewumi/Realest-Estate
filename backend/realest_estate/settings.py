@@ -27,19 +27,21 @@ SECRET_KEY = 'django-insecure-*w5a((a2+$(zyf$2x&w$)yh*(z#_t6ts8ro+z4#r@z!z_ylg#6
 DEBUG = True
 
 ALLOWED_HOSTS = ['http://localhost:3001', 'http://localhost:3000', 'localhost']
-CORS_ALLOW_ALL_ORIGINS = False
-CORS_ALLOWED_ORIGINS = ['http://localhost:3001',
-                        'http://localhost:3000']
+# CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOWED_ORIGINS = ['http://localhost:3001',
+#                         'http://localhost:3000']
 
-CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_METHODS = ["POST", "GET", "OPTIONS", "DELETE", "PUT"]
-# CORS_ORIGIN_WHITELIST = ('http://localhost:3001', 'http://localhost:3000')
+# CORS_ALLOW_CREDENTIALS = True
+# CORS_ALLOW_METHODS = ["POST", "GET", "OPTIONS", "DELETE", "PUT"]
+# # CORS_ORIGIN_WHITELIST = ('http://localhost:3001', 'http://localhost:3000')
 
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost:3001', 'http://localhost:3000']
-CSRF_COOKIE_SECURE = False
-CSRF_COOKIE_HTTPONLY = False
-CSRF_COOKIE_NAME = "XSRF-TOKEN"
+CSRF_TRUSTED_ORIGINS = ['http://localhost:3001',
+                        'http://localhost:3000', 'http://localhost:3002']
+# CSRF_COOKIE_SECURE = False
+# CSRF_COOKIE_HTTPONLY = False
+# SESSION_COOKIE_SECURE = False
+# CSRF_COOKIE_NAME = "XSRF-TOKEN"
 
 
 # Application definition

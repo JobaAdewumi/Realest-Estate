@@ -16,16 +16,23 @@ const SignUp = ({ setAlert, signup, isAuthenticated }) => {
 
   const { name, email, password, password2 } = formData;
 
+  const register = {
+		name: `${name}`,
+		email: `${email}`,
+		password: `${password}`,
+		password2: `${password2}`,
+	};
+
   const onChange = (e) =>
     setFormData({ ...formData, [e.target.name]: [e.target.value] });
 
   const onSubmit = (e) => {
     e.preventDefault();
 
-      if (password !== password2)
-          setAlert("Passwords do not match", "error");
-      else
-          signup({ name, email, password, password2 });
+    // if (password !== password2)
+    //   setAlert("Passwords do not match", "error");
+    // else
+      signup(register);
   };
 
   if (isAuthenticated) return <Navigate to='/' />;
